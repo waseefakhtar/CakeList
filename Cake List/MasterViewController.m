@@ -30,8 +30,9 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    CakeCell *cell = (CakeCell*)[tableView dequeueReusableCellWithIdentifier:@"Cell"];
-    
+    CakeCell *cell = (CakeCell*)[tableView dequeueReusableCellWithIdentifier:@"CakeCell"];
+    [self.tableView registerClass:[CakeCell self] forCellReuseIdentifier:@"CakeCell"];
+
     NSDictionary *object = self.objects[indexPath.row];
     cell.titleLabel.text = object[@"title"];
     cell.descriptionLabel.text = object[@"desc"];
