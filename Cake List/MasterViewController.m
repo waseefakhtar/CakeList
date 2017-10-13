@@ -17,6 +17,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     [self getData];
 }
 
@@ -30,18 +31,23 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    CakeCell *cell = (CakeCell*)[tableView dequeueReusableCellWithIdentifier:@"CakeCell"];
-    [self.tableView registerClass:[CakeCell self] forCellReuseIdentifier:@"CakeCell"];
 
+    CakeCell *cell = (CakeCell*)[tableView dequeueReusableCellWithIdentifier:@"CakeCell"];
+            
     NSDictionary *object = self.objects[indexPath.row];
     cell.titleLabel.text = object[@"title"];
     cell.descriptionLabel.text = object[@"desc"];
- 
     
-    NSURL *aURL = [NSURL URLWithString:object[@"image"]];
-    NSData *data = [NSData dataWithContentsOfURL:aURL];
-    UIImage *image = [UIImage imageWithData:data];
-    [cell.cakeImageView setImage:image];
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
+    dispatch_async(queue, ^(void) {
+        NSURL *aURL = [NSURL URLWithString:object[@"image"]];
+        NSData *data = [NSData dataWithContentsOfURL:aURL];
+        UIImage *image = [UIImage imageWithData:data];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [cell.cakeImageView setImage:image];
+        });
+    });
     
     return cell;
 }
@@ -51,22 +57,19 @@
 }
 
 - (void)getData{
-    
-    NSURL *url = [NSURL URLWithString:@"https://gist.githubusercontent.com/hart88/198f29ec5114a3ec3460/raw/8dd19a88f9b8d24c23d9960f3300d0c917a4f07c/cake.json"];
-    
-    NSData *data = [NSData dataWithContentsOfURL:url];
-    
-    NSError *jsonError;
-    id responseData = [NSJSONSerialization
-                       JSONObjectWithData:data
-                       options:kNilOptions
-                       error:&jsonError];
-    if (!jsonError){
+
+    NSURLRequest* request = [[NSURLRequest alloc] initWithURL:[NSURL URLWithString:@"https://gist.githubusercontent.com/hart88/198f29ec5114a3ec3460/raw/8dd19a88f9b8d24c23d9960f3300d0c917a4f07c/cake.json"]];
+    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse* response, NSData* data, NSError* error) {
+        
+        id responseData = [NSJSONSerialization
+                           JSONObjectWithData:data
+                           options:kNilOptions
+                           error:&error];
+        
         self.objects = responseData;
         [self.tableView reloadData];
-    } else {
-    }
-    
+
+    }];
 }
 
 @end
