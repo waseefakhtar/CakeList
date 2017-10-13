@@ -14,3 +14,9 @@ The project compiles but the app crashes as soon as it runs. The app loads a JSO
 We would like you to fix the crash bug, ensure the functionality of the app works as expected (all images display correctly on the table, all text is readable) and performs smoothly (ideally, this should be done without third party libraries). You should also refactor, optimise and improve the code where appropriate to use platform best practises. 
 
 Please note that we are not looking for perfection, but rather for a clean and pragmatic solution. This should include refactoring but shouldn’t be over engineered. The test can be completed in 2-3 hours; howerever, this is a not a limit. Feel free to spend more time on it if you wish.
+
+--
+
+UPDATE (October 13th, 2017):
+
+The project now compiles correctly, parses JSON asynchronously and displays in tableView without any lag or missing cells. If I were allowed to use third party libraries, I'd use PINRemoteImage or SDWebImage for downloading image asynchronously. Likewise, I'd use an alternative of SwiftyJSON for Objective-C to better deal with JSON.
